@@ -10,8 +10,11 @@ from icalendar 	   import Calendar, Event
 from xml.dom 	   import minidom
 from requests.auth import HTTPBasicAuth
 
-# A very useful ical generator in python.
-# Very quick minmal script to fetch the timetable and export as an iCal, displays the calendar from today up to a YEAR ahead.
+# A very useful and simple ical generator in python for ombiel based apps.
+
+# Very quick minmal script to fetch the timetable and export as an iCal
+
+# By default, this script displays the calendar from today up to a YEAR ahead, or even further.
 
 def convertStringToDateObject(str):
 	#print "Year: " + str[0:4] + " Month: " + str[5:7]  + " Day: " + str[8:10] + " Hour: " + str[11:13] + " Minute: " + str[14:16] + " Second: " + str[18:19]
@@ -32,8 +35,8 @@ authPassWD = 'Tqa7967pB8QCQuHAKMXM'
 
 todayYearOnly  = timeObject.localtime().tm_year
 futureYearOnly = timeObject.localtime().tm_year + 1
-allMonth = str(timeObject.localtime().tm_mon)
-allDay = str(timeObject.localtime().tm_mday)
+allMonth 	   = str(timeObject.localtime().tm_mon)
+allDay 		   = str(timeObject.localtime().tm_mday)
 
 if len(allMonth) == 1:
 	allMonth = '0{0}'.format(allMonth)
