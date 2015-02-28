@@ -13,7 +13,10 @@ To run this script you must have to following:
 * requests
 * icalendar
 
+1.  First, install the Python packages:
 
+    `sudo pip install requests icalendar`
 
+2. Run **python ombiel_service_to_ical.py** in the terminal to generate the ical for your timetable.
 
 More to be documented soon...
