@@ -49,6 +49,9 @@ futureYearOnly = timeObject.localtime().tm_year + 1
 allMonth 	   = str(timeObject.localtime().tm_mon)
 allDay 		   = str(timeObject.localtime().tm_mday)
 
+# Sanity check to force the date to append zero if its 
+# length is exactly 1 (The format required is HH so 4 = 04)
+ 
 if len(allMonth) == 1:
 	allMonth = '0{0}'.format(allMonth)
 
@@ -58,10 +61,10 @@ if len(allDay) == 1:
 pastYear   =  "{0}-{1}-{2}T00:00:00+00:00".format(str(todayYearOnly), allMonth,allDay)
 futureYear =  "{0}-{1}-{2}T00:00:00+00:00".format(str(futureYearOnly), allMonth,allDay)
 
-# All in one single request
+# All in one single request to campusm
 
 request_data = base_request.get('{0}/hull2/services/CampusMUniversityService/retrieveCalendar?username={1}&password={2}&calType=course_timetable&start={3}&end={4}'.format(BASE_REQUEST_URL,input_student_id,input_password,pastYear,futureYear), auth=(authUserN ,authPassWD))
-# Error checking
+# The request must return 'OK' to retrieve the data; else, it fails. 
 if request_data.status_code != 200:
 		print "Error {0}, Cannot retrieve timetable data, Exiting....".format(request_data.status_code)
 		exit(1)
