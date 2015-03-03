@@ -16,6 +16,7 @@ from requests.auth import HTTPBasicAuth
 
 # By default, this script displays the calendar from today up to a YEAR ahead, or even further.
 
+# Manual conversion to date time 
 def convertStringToDateObject(str):
 	#print "Year: " + str[0:4] + " Month: " + str[5:7]  + " Day: " + str[8:10] + " Hour: " + str[11:13] + " Minute: " + str[14:16] + " Second: " + str[18:19]
 	return datetime.datetime(int(str[0:4]), int(str[5:7]), int(str[8:10]),int(str[11:13]),int(str[14:16]),int(str[18:19]))
@@ -23,16 +24,26 @@ def convertStringToDateObject(str):
 base_request = requests
 
 timeObject = time
-
+# Student ID Input #
 input_student_id = raw_input("Enter your Student ID:")
-
+# Student ID Password #
 input_password = getpass.getpass('Enter your Student Password:',None)
+
+# Hard-coded URLs specifically to obtain timetables
+# from the University of Hull
+
+##############################
+# Initial Request to campusm #
+##############################
 
 BASE_REQUEST_URL = 'https://campusm.hull.ac.uk/'
 
+# Needed for Ombiels "Basic Authorisation" request
 authUserN = 'application_sec_user'
 authPassWD = 'Tqa7967pB8QCQuHAKMXM'
 
+# Time objects to retrieve the current Year, Month and Day 
+# Also adds one to another time object for next year  
 todayYearOnly  = timeObject.localtime().tm_year
 futureYearOnly = timeObject.localtime().tm_year + 1
 allMonth 	   = str(timeObject.localtime().tm_mon)
@@ -47,12 +58,18 @@ if len(allDay) == 1:
 pastYear   =  "{0}-{1}-{2}T00:00:00+00:00".format(str(todayYearOnly), allMonth,allDay)
 futureYear =  "{0}-{1}-{2}T00:00:00+00:00".format(str(futureYearOnly), allMonth,allDay)
 
-request_data = base_request.get('{0}/hull2/services/CampusMUniversityService/retrieveCalendar?username={1}&password={2}&calType=course_timetable&start={3}&end={4}'.format(BASE_REQUEST_URL,input_student_id,input_password,pastYear,futureYear), auth=(authUserN ,authPassWD))
+# All in one single request
 
+request_data = base_request.get('{0}/hull2/services/CampusMUniversityService/retrieveCalendar?username={1}&password={2}&calType=course_timetable&start={3}&end={4}'.format(BASE_REQUEST_URL,input_student_id,input_password,pastYear,futureYear), auth=(authUserN ,authPassWD))
+# Error checking
 if request_data.status_code != 200:
 		print "Error {0}, Cannot retrieve timetable data, Exiting....".format(request_data.status_code)
 		exit(1)
 		
+###########################
+# Exporting the iCalendar #
+###########################
+
 xmlData = minidom.parseString(request_data.text)
 
 cal_item_array = xmlData.getElementsByTagName('ns1:calitem')
@@ -63,7 +80,7 @@ TimeTableCalendar = Calendar()
 TimeTableCalendar.add('VERSION','2.0')
 TimeTableCalendar.add('X-WR-CALNAME','Hull University Timetable')
 
-# Done!
+# Exporting 
 print 'Exporting...'
 
 for table in cal_item_array:
@@ -93,7 +110,8 @@ for table in cal_item_array:
 	TimeTableEvent.add('location', table.getElementsByTagName('ns1:locCode')[0].firstChild.nodeValue)
 
 	TimeTableCalendar.add_component(TimeTableEvent)
-
+	
+# Creating the Timetable and appending the events to the file
 file = open(('TimeTable.ics'), 'wb')
 file.write(TimeTableCalendar.to_ical())
 file.close()
