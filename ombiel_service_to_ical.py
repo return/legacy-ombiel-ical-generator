@@ -6,6 +6,7 @@ import datetime
 import time
 import tempfile
 import getpass
+import pytz
 from icalendar 	   import Calendar, Event
 from xml.dom 	   import minidom
 from requests.auth import HTTPBasicAuth
@@ -19,7 +20,7 @@ from requests.auth import HTTPBasicAuth
 # Manual conversion to date time 
 def convertStringToDateObject(str):
 	#print "Year: " + str[0:4] + " Month: " + str[5:7]  + " Day: " + str[8:10] + " Hour: " + str[11:13] + " Minute: " + str[14:16] + " Second: " + str[18:19]
-	return datetime.datetime(int(str[0:4]), int(str[5:7]), int(str[8:10]),int(str[11:13]),int(str[14:16]),int(str[18:19]))
+	return datetime.datetime(int(str[0:4]), int(str[5:7]), int(str[8:10]),int(str[11:13]),int(str[14:16]),int(str[18:19]),tzinfo=pytz.timezone("Europe/London"))
 
 base_request = requests
 
@@ -63,7 +64,7 @@ futureYear =  "{0}-{1}-{2}T00:00:00+00:00".format(str(futureYearOnly), allMonth,
 
 # All in one single request to campusm
 
-request_data = base_request.get('{0}/hull2/services/CampusMUniversityService/retrieveCalendar?username={1}&password={2}&calType=course_timetable&start={3}&end={4}'.format(BASE_REQUEST_URL,input_student_id,input_password,pastYear,futureYear), auth=(authUserN ,authPassWD))
+request_data = base_request.get('{0}/hull/services/CampusMUniversityService/retrieveCalendar?username={1}&password={2}&calType=course_timetable&start={3}&end={4}'.format(BASE_REQUEST_URL,input_student_id,input_password,pastYear,futureYear), auth=(authUserN ,authPassWD))
 # The request must return 'OK' to retrieve the data; else, it fails. 
 if request_data.status_code != 200:
 		print "Error {0}, Cannot retrieve timetable data, Exiting....".format(request_data.status_code)
@@ -102,7 +103,7 @@ for table in cal_item_array:
 
 	TimeTableEvent.add('dtend', endDateTimeObject)
 
-	TimeTableEvent.add('summary',table.getElementsByTagName('ns1:desc1')[0].firstChild.nodeValue)
+	TimeTableEvent.add('summary',table.getElementsByTagName('ns1:desc2')[0].firstChild.nodeValue)
 
 	try:
 		TimeTableEvent.add('description', table.getElementsByTagName('ns1:desc1')[0].firstChild.nodeValue + " with " + table.getElementsByTagName('ns1:teacherName')[0].firstChild.nodeValue)
