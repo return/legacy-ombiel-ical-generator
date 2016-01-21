@@ -19,4 +19,8 @@ Python packages:
 
 2. Run **python ombiel_service_to_ical.py** in the terminal to generate the ical for your timetable.
 
-This script is not endorsed by ombiel and the endpoints may change for several campusm apps.
+Done!
+
+The endpoints used to generate the timetables will **ONLY** work, if your university has a application that was made by oMbiel.
+
+This script is not endorsed by oMbiel and the endpoints may be different for several campusm supported apps.
