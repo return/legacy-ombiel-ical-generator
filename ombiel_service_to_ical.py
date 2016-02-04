@@ -59,13 +59,14 @@ if len(allMonth) == 1:
 if len(allDay) == 1:
 	allDay = '0{0}'.format(allDay)
 
+# Create a datetime object of the past year, and a year ahead.
 pastYear   =  "{0}-{1}-{2}T00:00:00+00:00".format(str(todayYearOnly), allMonth,allDay)
 futureYear =  "{0}-{1}-{2}T00:00:00+00:00".format(str(futureYearOnly), allMonth,allDay)
 
 # All in one single request to campusm
-
 request_data = base_request.get('{0}/hull/services/CampusMUniversityService/retrieveCalendar?username={1}&password={2}&calType=course_timetable&start={3}&end={4}'.format(BASE_REQUEST_URL,input_student_id,input_password,pastYear,futureYear), auth=(authUserN ,authPassWD))
-# The request must return 'OK' to retrieve the data; else, it fails. 
+
+# The request must return 'OK' to retrieve the data; else, it fails.
 if request_data.status_code != 200:
 		print "Error {0}, Cannot retrieve timetable data, Exiting....".format(request_data.status_code)
 		exit(1)
@@ -74,19 +75,23 @@ if request_data.status_code != 200:
 # Exporting the iCalendar #
 ###########################
 
+# Parse the server's response from plain text into raw XML.
 xmlData = minidom.parseString(request_data.text)
 
+# Parse the raw XML data to get a single 'calitem'.
 cal_item_array = xmlData.getElementsByTagName('ns1:calitem')
 
+# Create a Calendar object
 TimeTableCalendar = Calendar()
 
-# iCal Header
+# iCal Headers added to the top of the ical file
 TimeTableCalendar.add('VERSION','2.0')
-TimeTableCalendar.add('X-WR-CALNAME','Hull University Timetable')
+TimeTableCalendar.add('X-WR-CALNAME','University of Hull Timetable')
 
 # Exporting 
 print 'Exporting...'
 
+# Loop for all items in the calendar item's array.
 for table in cal_item_array:
 
 	TimeTableEvent = Event()
