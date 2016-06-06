@@ -1,2 +1,3 @@
 icalendar == 3.8.4
 requests == 2.5.1
+defusedcml == 0.4.1

@@ -8,7 +8,7 @@ import tempfile
 import getpass
 import pytz
 from icalendar 	   import Calendar, Event
-from xml.dom 	   import minidom
+from defusedxml    import minidom
 from requests.auth import HTTPBasicAuth
 
 # A very useful and simple ical generator in python for ombiel based apps.
